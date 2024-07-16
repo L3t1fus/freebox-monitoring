@@ -4,6 +4,7 @@ import concurrent.futures
 from dotenv import load_dotenv
 from prometheus_client import start_http_server, Gauge, Info
 from api_request import get_request, post_with_headers_request
+from loguru import logger
 
 existing_metrics = {}
 
@@ -52,7 +53,7 @@ def time_script(start_time):
     duration = end_time - start_time
     formatted_duration = "{:.2f}".format(duration)
     time_script.set(formatted_duration)
-    print("Metrics generation time: " + formatted_duration + " seconds")
+    logger.info("Metrics generation time: " + formatted_duration + " seconds")
 
 
 def system_metrics(headers):
@@ -82,9 +83,9 @@ def system_metrics(headers):
 
         start_from = get_or_create_gauge('freebox_start_from', 'uptime_val')
         start_from.set(system_request['result']['uptime_val'])
-        print("System metrics: Success")
+        logger.info("System metrics: Success")
     else:
-        print("System metrics: " + str(system_request))
+        logger.error("System metrics: " + str(system_request))
 
 
 def lan_browser_pub_metrics(headers):
@@ -108,9 +109,9 @@ def lan_browser_pub_metrics(headers):
                 'mac_address', 'active', 'vendor_name', 'host_type', 'last_time_reachable', 'ip', 'last_activity', 'connectivity_type', 'default_name', 'first_activity', 'primary_name'])
             lan_browser_pub.labels(mac_address=mac_address, active=active, vendor_name=vendor_name, host_type=host_type, last_time_reachable=last_time_reachable, ip=ip,
                                    last_activity=last_activity, connectivity_type=connectivity_type, default_name=default_name, first_activity=first_activity, primary_name=primary_name).set(1 if reachable else 0)
-        print("Lan browser: Success")
+        logger.info("Lan browser: Success")
     else:
-        print("Lan browser: " + str(lan_browser_pub_request))
+        logger.error("Lan browser: " + str(lan_browser_pub_request))
 
 
 def lan_config(headers):
@@ -126,9 +127,9 @@ def lan_config(headers):
             'name_dns', 'name_mdns', 'name', 'mode', 'name_netbios', 'ip'])
         lan_config.labels(name_dns=name_dns, name_mdns=name_mdns,
                           name=name, mode=mode, name_netbios=name_netbios, ip=ip)
-        print("Lan config: Success")
+        logger.info("Lan config: Success")
     else:
-        print("Lan config: " + str(lan_config_request))
+        logger.error("Lan config: " + str(lan_config_request))
 
 
 def port_forwarding(headers):
@@ -150,11 +151,11 @@ def port_forwarding(headers):
                                                   'id', 'enabled', 'ip_proto', 'wan_port_start', 'wan_port_end', 'lan_ip', 'lan_port', 'hostname', 'host', 'src_ip', 'comment'])
             port_forwarding.labels(id=id, enabled=enabled, ip_proto=ip_proto, wan_port_start=wan_port_start, wan_port_end=wan_port_end,
                                    lan_ip=lan_ip, lan_port=lan_port, hostname=hostname, host=host, src_ip=src_ip, comment=comment).set(1 if enabled else 0)
-        print("Port forwarding: Success")
+        logger.info("Port forwarding: Success")
     elif not 'result' in port_forwarding_request and port_forwarding_request['success']:
-        print("Port forwarding: No port forwarding")
+        logger.warn("Port forwarding: No port forwarding")
     else:
-        print("Port forwarding: " + str(port_forwarding_request))
+        logger.error("Port forwarding: " + str(port_forwarding_request))
 
 
 def port_incoming(headers):
@@ -174,11 +175,11 @@ def port_incoming(headers):
                                                 'id', 'enabled', 'type', 'active', 'max_port', 'min_port', 'in_port', 'readonly', 'netns'])
             port_incoming.labels(id=id, type=type, enabled=enabled, active=active, max_port=max_port,
                                  min_port=min_port, in_port=in_port, readonly=readonly, netns=netns).set(1 if enabled else 0)
-        print("Port incoming: Success")
+        logger.info("Port incoming: Success")
     elif not 'result' in port_incoming_request and port_incoming_request['success']:
-        print("Port incoming: No port incoming")
+        logger.warn("Port incoming: No port incoming")
     else:
-        print("Port incoming: " + str(port_incoming_request))
+        logger.error("Port incoming: " + str(port_incoming_request))
 
 
 def vpn_connection(headers):
@@ -197,11 +198,11 @@ def vpn_connection(headers):
             'rx_bytes', 'tx_bytes', 'user', 'vpn', 'src_port', 'src_ip', 'auth_time', 'local_ip'])
         vpn_connection.labels(rx_bytes=rx_bytes, tx_bytes=tx_bytes, user=user, vpn=vpn,
                               src_port=src_port, src_ip=src_ip, auth_time=auth_time, local_ip=local_ip)
-        print("VPN connection: Success")
+        logger.info("VPN connection: Success")
     elif not 'result' in vpn_connection_request and vpn_connection_request['success']:
-        print("VPN connection: No user connected")
+        logger.warn("VPN connection: No user connected")
     else:
-        print("VPN connection: " + str(vpn_connection_request))
+        logger.error("VPN connection: " + str(vpn_connection_request))
 
 
 def rrd_net(headers):
@@ -224,9 +225,9 @@ def rrd_net(headers):
             'bw_up', 'bw_down', 'rate_up', 'rate_down', 'vpn_rate_up', 'vpn_rate_down'])
         rrd_net.labels(bw_up=bw_up, bw_down=bw_down, rate_up=rate_up,
                        rate_down=rate_down, vpn_rate_up=vpn_rate_up, vpn_rate_down=vpn_rate_down)
-        print("RRD net: Success")
+        logger.info("RRD net: Success")
     else:
-        print("RRD net: " + str(rrd_net_request))
+        logger.error("RRD net: " + str(rrd_net_request))
 
 
 def rrd_switch(headers):
@@ -251,9 +252,9 @@ def rrd_switch(headers):
             'rx_1', 'tx_1', 'rx_2', 'tx_2', 'rx_3', 'tx_3', 'rx_4', 'tx_4'])
         rrd_switch.labels(rx_1=rx_1, tx_1=tx_1, rx_2=rx_2, tx_2=tx_2,
                           rx_3=rx_3, tx_3=tx_3, rx_4=rx_4, tx_4=tx_4)
-        print("RRD switch: Success")
+        logger.info("RRD switch: Success")
     else:
-        print("RRD switch: " + str(rrd_switch_request))
+        logger.error("RRD switch: " + str(rrd_switch_request))
 
 
 def storage_disk(headers):
@@ -289,8 +290,8 @@ def storage_disk(headers):
                                            'id', 'write_error_requests', 'state', 'write_requests', 'total_bytes', 'model', 'active_duration', 'temp', 'serial', 'fstype', 'label', 'internal', 'fsck_result', 'free_bytes', 'used_bytes', 'path'])
         storage_disk.labels(idle_duration=idle_duration, read_error_requests=read_error_requests, read_requests=read_requests, spinning=spinning, table_type=table_type, firmware=firmware, type=type, idle=idle, connector=connector, id=id, write_error_requests=write_error_requests,
                             state=state, write_requests=write_requests, total_bytes=total_bytes, model=model, active_duration=active_duration, temp=temp, serial=serial, fstype=fstype, label=label, internal=internal, fsck_result=fsck_result, free_bytes=free_bytes, used_bytes=used_bytes, path=path)
-        print("Storage disk: Success")
+        logger.info("Storage disk: Success")
     elif not 'result' in storage_disk_request and storage_disk_request['success']:
-        print("Storage disk: No disk")
+        logger.warn("Storage disk: No disk")
     else:
-        print("Storage disk: " + str(storage_disk_request))
+        logger.error("Storage disk: " + str(storage_disk_request))

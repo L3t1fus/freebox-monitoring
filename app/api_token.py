@@ -3,6 +3,7 @@ import time
 from dotenv import load_dotenv
 from api_request import get_request, post_request
 import os
+from loguru import logger
 
 
 def save_token(token):
@@ -34,7 +35,7 @@ def obtain_app_token():
 
     if response["success"]:
         track_id = response["result"]["track_id"]
-        print("Veuillez autoriser l'application.")
+        logger.info("Veuillez autoriser l'application.")
 
         start_time = time.time()
         while time.time() - start_time < 600:  # 10 min
@@ -44,13 +45,13 @@ def obtain_app_token():
             if status == "granted":
                 app_token = response["result"]["app_token"]
                 save_token({"app_token": app_token})
-                print("Autorisation accordée. Token enregistré.")
+                logger.info("Autorisation accordée. Token enregistré.")
                 break
             elif status == "denied":
-                print("Autorisation refusée.")
+                logger.error("Autorisation refusée.")
                 break
             elif status == "timeout" or status == "unknown":
-                print("Temps d'attente écoulé ou statut inconnu.")
+                logger.error("Temps d'attente écoulé ou statut inconnu.")
                 break
 
             time.sleep(15)

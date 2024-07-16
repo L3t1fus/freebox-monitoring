@@ -5,6 +5,7 @@ import os
 import requests
 import time
 from api_request import get_url
+from loguru import logger
 
 
 def open_session():
@@ -25,12 +26,12 @@ def open_session():
         if session_response["success"]:
             session_token = session_response["result"]["session_token"]
             headers = {"X-Fbx-App-Auth": session_token}
-            print("Session open: Success")
+            logger.info("Session open: Success")
             return headers
         else:
             attempts += 1
-            print("Session open: Fail")
-            print(session_response)
+            logger.error("Session open: Fail")
+            logger.error(session_response)
             if attempts < max_attempts:
                 time.sleep(1)
 

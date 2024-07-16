@@ -1,3 +1,4 @@
 prometheus-client
 python-dotenv
 requests
+loguru
