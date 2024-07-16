@@ -4,11 +4,11 @@ Monitoring tool for the freebox delta.
 
 Using prometheus to retrieve metrics from the free api and grafana for visualization.
 
-![Grafana1](https://github.com/mazama923/freebox-monitoring/blob/main/doc/img/grafana1.png)
+![Grafana1](https://github.com/L3t1fus/freebox-monitoring/blob/main/doc/img/grafana1.png)
 
-![Grafana2](https://github.com/mazama923/freebox-monitoring/blob/main/doc/img/grafana2.png)
+![Grafana2](https://github.com/L3t1fus/freebox-monitoring/blob/main/doc/img/grafana2.png)
 
-Link for dashboard: https://grafana.com/grafana/dashboards/20394-freebox-monitoring/
+Link for dashboard: https://grafana.com/grafana/dashboards/21535
 
 ## Installation
 
@@ -18,12 +18,12 @@ The docker image contains the contents of the app folder, it already exposes por
 An example of docker compose is provided in the project.
 
 Use the latest available image from the project:
-https://hub.docker.com/repository/docker/benlexa/freebox-monitoring/general
+[https://hub.docker.com/r/l3t1fus/freebox](https://hub.docker.com/r/l3t1fus/freebox)
 
 
 ```yml
   freebox-monitoring:
-    image: benlexa/freebox-monitoring:latest
+    image: prophetdev/freebox:latest
     container_name: freebox-monitoring
     restart: always
     volumes:
@@ -40,10 +40,10 @@ https://hub.docker.com/repository/docker/benlexa/freebox-monitoring/general
 **Prérequis:** Have python and pip installed on your host machine
 
 ```bash
-git clone git@github.com:mazama923/freebox-monitoring.git
+git clone git@github.com:L3t1fus/freebox.git
 ```
 ```bash
-cd freebox-monitoring/app/
+cd freebox/app/
 ```
 ```bash
 pip install -r requirements.txt
@@ -65,7 +65,7 @@ BASE_API_URL = "https://mafreebox.freebox.fr"
 TOKEN_FILE_PATH = /token/token.json
 CERT_FILE_PATH = /app/cert/freebox_ecc_root_ca.pem
 SCRAPE_INTERVAL = 30
-PORT_HTTP = 8000
+PORT_HTTP = 8020
 ```
 ```bash
 python3 main.py
@@ -82,6 +82,6 @@ once validated, go to your freebox panel.
 
 And add the right: **Modification des réglages de la Freebox**
 
-![Rights](https://github.com/mazama923/freebox-monitoring/blob/main/doc/img/rights.png)
+![Rights](https://github.com/L3t1fus/freebox-monitoring/blob/main/doc/img/rights.png)
 
 once done the application is ready and able to retrieve the metrics
