@@ -8,6 +8,7 @@ load_dotenv()
 start_prometheus()
 
 while True:
+    headers = None
     try:
         start_time = time.time()
         headers = open_session()
